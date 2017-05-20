@@ -87,7 +87,7 @@ def main():
     print(method1(a),method2(a),method3(a,n,startingNode))
 if __name__ == "__main__":
     main()
-    
+    #sim = simulation for each graph to calculate time 
 def mean_complex(sim, nodes, prob,n_graph,n):
     
     v1 = []
