@@ -128,3 +128,36 @@ def mean_complex(sim, nodes, prob,n_graph,n):
                 
         print(v3)
         print("mean of method3:",np.mean(v3))
+        
+        
+        
+v1 = []
+v2 = []
+v3 = []
+
+sim = 10
+
+for i in range(0,3):
+    g = buildRandomGraph(100, 80)
+    
+    for j in range(sim):
+        t1 = time.time()
+        m1 = method1(g)
+        v1.append(time.time()-t1)
+    
+    for k in range(sim):
+        t2 = time.time()
+        m2 = method2(g)
+        v2.append(time.time()-t2)
+    
+    for l in range(sim):
+        t3 = time.time()
+        m3 = method3(g,8,3)
+        v3.append(time.time()-t3)
+        
+print(v1)
+print(v2)
+print(v3)
+
+mean_m1, mean_m2, mean_m3 = np.mean(v1), np.mean(v2), np.mean(v3)
+print("mean method 1:",mean_m1 "mean method 2:",mean_m2 "mean method 3", mean_m3)
