@@ -23,7 +23,7 @@ class RegularGraph:
             # iterating through the lines creating the random arcs
             for i in range(self.n):
 
-                # check if the degree of the node is already r or it has 0 arcs (it is still filled with nan)
+                # check if the degree of the node is already r
                 if self.mat[i,i] < self.r:
                     arcs_remaining = self.r - self.mat[i,i]
 
@@ -42,6 +42,8 @@ class RegularGraph:
                             new_arcs[j] = np.random.choice([0, -1], p=[1-self.p, self.p])
 
                     self.draw_arcs(i, empty_pos, new_arcs)
+
+        # replace the NAN values with 0
         where_are_NaNs = np.isnan(self.mat)
         self.mat[where_are_NaNs] = 0
         return self.mat
@@ -55,13 +57,13 @@ class RegularGraph:
                     self.mat[i, empty_pos[j]] = new_arcs[j]  # draw the arc
                     self.mat[i, i] += 1  # update the node degree
                     self.mat[empty_pos[j], empty_pos[j]] += 1  # update the node degree in the other node
-
                     self.mat[empty_pos[j], i] = -1  # "reflect" the arc to the lower matrix
 
-                    # check if the other nodes are full (node's degree == r)
+                    # check if the other node are full (node's degree == r)
                     self.check_degree(empty_pos[j])
         self.check_degree(i)
 
+    # if the node has degree r, make it unavailable, so no other nodes can create arcs to it
     def check_degree(self, i):
         if self.mat[i, i] == self.r:
             self.remaining_nodes -= 1

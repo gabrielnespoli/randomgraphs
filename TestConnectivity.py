@@ -1,7 +1,5 @@
 import sys
 import numpy as np
-import math
-import datetime
 import time
 from numpy import linalg as LA
 randomGraph = __import__('ER-Random Graph')
@@ -19,6 +17,7 @@ def matrix_to_list(matrix):
         graph[i] = adj
     return graph
 
+
 def bfs(graph, v):
     all = []
     Q = []
@@ -33,43 +32,37 @@ def bfs(graph, v):
     return all
 
 
-def method1(L):
+def is_connected_method1(L):
+    is_connected = False
     k = np.shape(L)[0]  # take the dimesion of Laplacian matrix
-    sum_B = np.zeros((k, k))
     P = np.identity(k)
     A = np.diag(np.diag(L)) - L
-    #print(A)
     sum_B = P
     for i in range(1, k):
         sum_B += LA.matrix_power(A, i)  # I+A+A^2....>0
-        # print(i)
-        # print(sum_B)
-        # sum_B += P
-        # P = P * A
     s = sum_B
-    #print(s)
-    if (s.all() > 0):
-        print("Connected.M1")
-    else:
-        print("Not connected.M1")
+    if s.all() > 0:
+        is_connected = True
+    return is_connected
 
 
-def method2(rand_graph):
+def is_connected_method2(rand_graph):
+    is_connected = False
     eigenValues = LA.eig(rand_graph)[0]
     secmin = sorted(eigenValues)[1]  ### sort and pick second
     if (secmin > 0.001):
-        print("Connected.M2")
-    else: print("Not connected.M2",secmin)
+        is_connected = True
+    return is_connected
 
 
-def method3(rand_graph,n,start):
-    start_time = time.time()
+def is_connected_method3(rand_graph, n, start):
+    is_connected = False
     lst = matrix_to_list(rand_graph)
     breads = bfs(lst, start)
     if n == len(breads):
-        print("Connected.M3")
-    else:
-        print("Not connected.M3 ")
+        is_connected = True
+    return is_connected
+
 
 def main():
     n = int(sys.argv[1])
@@ -79,15 +72,57 @@ def main():
 
     rand_graph = randomGraph.buildRandomGraph(n, p)
     print(rand_graph)
-    print("\n",method1(rand_graph), method2(rand_graph),method3(rand_graph,n,startingNode))
+
+    print("\n")
+    if is_connected_method1(rand_graph):
+        print("Connected.M1")
+
+    if is_connected_method2(rand_graph):
+        print("Connected.M2")
+
+    if is_connected_method3(rand_graph, n, startingNode):
+        print("Connected.M3")
 
     rand_reg_graph = regRandGraph.RegularGraph(n, r, p)
     a = rand_reg_graph.build_regular_graph()
     print(a)
-    print(method1(a),method2(a),method3(a,n,startingNode))
+    print("M1 ", is_connected_method1(a),"\nM2 ", is_connected_method2(a),"\nM3 ", is_connected_method3(a, n, startingNode))
+
+    v1 = []
+    v2 = []
+    v3 = []
+
+    sim = 10
+
+    for i in range(0, 3):
+        g = randomGraph.buildRandomGraph(100, 80)
+
+        for j in range(sim):
+            t1 = time.time()
+            m1 = is_connected_method1(g)
+            v1.append(time.time() - t1)
+
+        for k in range(sim):
+            t2 = time.time()
+            m2 = is_connected_method2(g)
+            v2.append(time.time() - t2)
+
+        for l in range(sim):
+            t3 = time.time()
+            m3 = is_connected_method3(g, 8, 3)
+            v3.append(time.time() - t3)
+
+    print(v1)
+    print(v2)
+    print(v3)
+
+    mean_m1, mean_m2, mean_m3 = np.mean(v1), np.mean(v2), np.mean(v3)
+    print("mean method 1:", mean_m1, "mean method 2:", mean_m2, "mean method 3", mean_m3)
+
 if __name__ == "__main__":
     main()
-    #sim = simulation for each graph to calculate time 
+
+
 def mean_complex(sim, nodes, prob,n_graph,n):
     
     v1 = []
@@ -96,68 +131,35 @@ def mean_complex(sim, nodes, prob,n_graph,n):
     
     if(n == 1):
         for i in range(0,n_graph):
-            g = buildRandomGraph(nodes, prob)
+            g = randomGraph.buildRandomGraph(nodes, prob)
             for j in range(sim):  #calculate several times complexity on the same graph
                 t1 = time.time()    #to be more precisely
-                m1 = method1(g)
+                m1 = is_connected_method1(g)
                 v1.append(time.time()-t1)
             
         print(v1)
-        print("mean of method1:",np.mean(v1))
+        print("mean of is_connected_method1:",np.mean(v1))
         
     if(n == 2):
         for i in range(0,n_graph):
-            g = buildRandomGraph(nodes, prob)
+            g = randomGraph.buildRandomGraph(nodes, prob)
         
             for k in range(sim):
                 t2 = time.time()
-                m2 = method2(g)
+                m2 = is_connected_method2(g)
                 v2.append(time.time()-t2)
         print(v2)
-        print("mean of method2:",np.mean(v2))
+        print("mean of is_connected_method2:",np.mean(v2))
           
         
     if(n==3):
         for i in range(0,n_graph):
-            g = buildRandomGraph(nodes, prob)
+            g = randomGraph.buildRandomGraph(nodes, prob)
             
             for l in range(sim):
                 t3 = time.time()
-                m3 = method3(g,nodes,1)
+                m3 = is_connected_method3(g, nodes, 1)
                 v3.append(time.time()-t3)
                 
         print(v3)
-        print("mean of method3:",np.mean(v3))
-        
-        
-        
-v1 = []
-v2 = []
-v3 = []
-
-sim = 10
-
-for i in range(0,3):
-    g = buildRandomGraph(100, 80)
-    
-    for j in range(sim):
-        t1 = time.time()
-        m1 = method1(g)
-        v1.append(time.time()-t1)
-    
-    for k in range(sim):
-        t2 = time.time()
-        m2 = method2(g)
-        v2.append(time.time()-t2)
-    
-    for l in range(sim):
-        t3 = time.time()
-        m3 = method3(g,8,3)
-        v3.append(time.time()-t3)
-        
-print(v1)
-print(v2)
-print(v3)
-
-mean_m1, mean_m2, mean_m3 = np.mean(v1), np.mean(v2), np.mean(v3)
-print("mean method 1:",mean_m1 "mean method 2:",mean_m2 "mean method 3", mean_m3)
+        print("mean of is_connected_method3:",np.mean(v3))
