@@ -1,7 +1,7 @@
 import sys
 import numpy as np
-import math
-import datetime
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
 class RegularGraph:
@@ -91,11 +91,16 @@ def main():
     n = int(sys.argv[1])
     r = int(sys.argv[2])
     p = float(sys.argv[3])
-    for i in range(30):
-        t1 = datetime.datetime.now()
-        rand_graph = RegularGraph(n, r, p)
-        a = rand_graph.build_regular_graph()
-        print(datetime.datetime.now() - t1)
+    #for i in range(30):
+     #   t1 = datetime.datetime.now()
+    rand_graph = RegularGraph(n, r, p)
+    g_matrix = rand_graph.build_regular_graph()
+    print(g_matrix)
+    G = nx.from_numpy_matrix(g_matrix)
+    plt.clf()
+    nx.draw_networkx(G, pos=nx.spring_layout(G))
+    plt.show(block=True)
+     #   print(datetime.datetime.now() - t1)
 
 if __name__ == "__main__":
     main()
