@@ -60,19 +60,19 @@ class Graph:
 
         # Augment the flow while there is a path from source to sink
         while self.BFS(source, sink, parent):
-            path = ""  # keep track of the nodes visited
+            path = []  # keep track of the nodes visited
 
             path_flow = np.inf
             s = sink
             while s != source:
-                path += str(s)
+                path.append(s)
                 path_flow = min(path_flow, self.graph[parent[s]][s])
                 if s != source and s != sink:
                     self.delete_edges(s)  # remove all the edges of the vertex s, so it cannot be used again
                 elif parent[s] == source:
                     self.delete_edge(source, sink)
                 s = parent[s]
-            path += str(source)
+            path.append(source)
 
             # just enter here in the first cicle or the path is also a shortest path
             if len(paths) == 0:
