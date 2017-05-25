@@ -7,7 +7,6 @@ regRandGraph = __import__('Regular Random Graph')
 dp = __import__('DisjointPath')
 
 
-
 def throughput(origG, l):
     n = len(origG)
     links = np.zeros((n, n,))
@@ -19,25 +18,20 @@ def throughput(origG, l):
             sel = dp.Graph(matrix)
             disj_path = sel.find_disjoint_paths(i, j, l)
             paths = disj_path[1]
-
-            for path in paths:
-                k = 0
-                while k < len(path) - 1:
-                    if (path[k] < path[k + 1]):
-                        if links[path[k], path[k + 1]] == 0:
-                            links[path[k], path[k + 1]] = 1
+            true_l = disj_path[0] #True number of disjoint path
+            if true_l != 0:
+                for path in paths:
+                    k = 0
+                    while k < len(path) - 1:
+                        if (path[k] < path[k + 1]):
+                            links[path[k], path[k + 1]] = links[path[k], path[k + 1]] + 1/true_l
                         else:
-                            links[path[k], path[k + 1]] = links[path[k], path[k + 1]] + 1
-                    else:
-                        if links[path[k + 1], path[k]] == 0:
-                            links[path[k + 1], path[k]] = 1
-                        else:
-                            links[path[k + 1], path[k]] = links[path[k + 1], path[k]] + 1
-                    k = k + 1
+                            links[path[k + 1], path[k]] = links[path[k + 1], path[k]] + 1/true_l
+                        k = k + 1
 
             j = j + 1
     m = links.max()
-    thr = l / m
+    thr = 1 / m
     return thr
 
 def destroyLink(matrix, i, j):
@@ -50,7 +44,6 @@ def linkFail (mat, p, l, n_fail):
     matrix = np.copy(mat)
     failure = 0
     if n_fail != 0:
-        c = 1- p
         for i in range(len(mat)):
             for j in range(len(mat)):
                 if (matrix[i, j] == -1):
@@ -69,8 +62,6 @@ def plotThroughput( mat, l, prob, n_fail):
     for p in prob:
         t = linkFail(mat, p, l, n_fail)
         thr.append(t)
-
-    print(thr)
 
     plt.plot(prob, thr)
     plt.xlabel('Probabilities')
