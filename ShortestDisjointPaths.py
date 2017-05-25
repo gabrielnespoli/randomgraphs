@@ -37,8 +37,7 @@ class Graph:
             u = queue.pop(0)
 
             # Get all adjacent vertices of the dequeued vertex u
-            # If a adjacent has not been visited, then mark it
-            # visited and enqueue it
+            # If a adjacent has not been visited, then mark it visited and enqueue it
             for ind, val in enumerate(self.graph[u]):
                 if visited[ind] == False and val == -1:
                     queue.append(ind)
@@ -51,39 +50,33 @@ class Graph:
 
     # Returns the maximum number of edge-disjoint paths from s to t in the given graph
     # It was used the max-flow/residual capacity approach
-    def find_disjoint_paths(self, source, sink, l):
+    def find_disjoint_paths(self, source, dest, l):
         paths = []
         # This array is filled by BFS to store path
         parent = [-1]*self.ROW
-
-        max_flow = 0  # There is no flow initially
+        n_disjoint_paths = 0
 
         # Augment the flow while there is a path from source to sink
-        while self.BFS(source, sink, parent):
+        while self.BFS(source, dest, parent):
             path = ""  # keep track of the nodes visited
-
-            path_flow = np.inf
-            s = sink
-            while s != source:
-                path += str(s)
-                path_flow = min(path_flow, self.graph[parent[s]][s])
-                if s != source and s != sink:
-                    self.delete_edges(s)  # remove all the edges of the vertex s, so it cannot be used again
-                elif parent[s] == source:
-                    self.delete_edge(source, sink)
-                s = parent[s]
+            node = dest
+            while node != source:
+                path += str(node)
+                if node != source and node != dest:
+                    self.delete_edges(node)  # remove all the edges of the vertex s, so it cannot be used again
+                elif parent[node] == source:
+                    self.delete_edge(source, dest)
+                node = parent[node]
             path += str(source)
 
-            # just enter here in the first cicle or the path is also a shortest path
-            if len(paths) == 0:
-                max_flow += path_flow   # Add path flow to overall flow
+            # just enter here in the first cycle or the path is also a shortest path
+            if len(paths) == 0 or len(path) == len(paths[0]):
+                n_disjoint_paths += 1  # Add path flow to overall flow
                 paths.append(path[::-1])
-            elif len(path) == len(paths[0]):
-                max_flow += path_flow  # Add path flow to overall flow
-                paths.append(path[::-1])
+
             if l == len(paths):
                 break
-        return -max_flow, paths
+        return n_disjoint_paths, paths
 
     # delete all the edges of one node
     def delete_edges(self, u):
@@ -102,8 +95,8 @@ def main():
     print(rand_graph)
     G = nx.from_numpy_matrix(rand_graph)
     plt.clf()
-    #nx.draw_networkx(G, pos=nx.spring_layout(G))
-    #plt.show(block=True)
+    nx.draw_networkx(G, pos=nx.spring_layout(G))
+    plt.show(block=True)
 
     g = Graph(rand_graph)
     source = 0;
