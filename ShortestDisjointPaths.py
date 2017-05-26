@@ -58,16 +58,16 @@ class Graph:
 
         # iterate until is possible to find a path from source  to destination
         while self.BFS(source, dest, parent):
-            path = ""  # keep track of the nodes visited
+            path = []  # keep track of the nodes visited
             node = dest
             while node != source:
-                path += str(node)
+                path.append(node)
                 if node != source and node != dest:
                     self.delete_edges(node)  # remove all the edges of the vertex s, so it cannot be used again
                 elif parent[node] == source:
                     self.delete_edge(source, dest)
                 node = parent[node]
-            path += str(source)
+            path.append(source)
 
             # just enter here in the first cycle or the path is also a shortest path
             if len(paths) == 0 or len(path) == len(paths[0]):

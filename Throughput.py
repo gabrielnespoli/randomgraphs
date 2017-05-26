@@ -141,8 +141,8 @@ def main():
     prob = np.arange(0.01, 0.25, 0.01)
     p = 0.7
     r = 7
-    plotThroughput_Random(p)
-    plotThroughput_Regular(p, r)
+    #plotThroughput_Random(p)
+    #plotThroughput_Regular(p, r)
     n = 20
     rand_graph = regRandGraph.RegularGraph(n, r, p)
     mat_r = rand_graph.build_regular_graph()
