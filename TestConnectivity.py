@@ -9,13 +9,8 @@ regRandGraph = __import__('Regular Random Graph')
 #function needed for bfs , creates a dictionary (idx,[adjacent nodes]
 def matrix_to_dict(matrix):
     graph = {}
-    for i, node in enumerate(matrix):
-        # adj = []
-        # for j, connected in enumerate(node):
-        #     if connected:
-        #         adj.append(j)
-        # graph[i] = adj
-        graph[i] = list(np.where(matrix[i] != 0)[0])
+    for i, node in enumerate(matrix): # gives position-rowvalues
+        graph[i] = list(np.where(node != 0)[0])
     return graph
 
 
