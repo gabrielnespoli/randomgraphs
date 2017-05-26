@@ -56,7 +56,7 @@ class Graph:
         parent = [-1]*self.ROW
         n_disjoint_paths = 0
 
-        # Augment the flow while there is a path from source to sink
+        # iterate until is possible to find a path from source  to destination
         while self.BFS(source, dest, parent):
             path = ""  # keep track of the nodes visited
             node = dest
