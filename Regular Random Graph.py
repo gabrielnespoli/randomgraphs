@@ -1,3 +1,4 @@
+# Author: Gabriel Nespoli
 import sys
 import numpy as np
 import networkx as nx
